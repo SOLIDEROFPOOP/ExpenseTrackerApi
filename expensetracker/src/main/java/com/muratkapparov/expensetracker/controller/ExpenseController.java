@@ -5,8 +5,7 @@ import com.muratkapparov.expensetracker.service.ExpenseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,5 +18,12 @@ public class ExpenseController {
     public List<Expense> getAllExpenses(){
         return expenseService.getAllExpenses();
     }
-
+    @GetMapping("/expenses/{id}")
+    public Expense getExpenseById(@PathVariable("id") Long id){
+        return expenseService.getExpenseById(id);
+    }
+    @DeleteMapping("/expenses")
+    public String deleteExpenseById(@RequestParam("id") Long id){
+        return "Deleting the expense object by its id:" + id;
+    }
 }
