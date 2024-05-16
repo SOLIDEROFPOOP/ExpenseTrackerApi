@@ -1,10 +1,10 @@
 package com.muratkapparov.expensetracker.controller;
-
 import com.muratkapparov.expensetracker.entity.Expense;
 import com.muratkapparov.expensetracker.service.ExpenseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +15,8 @@ public class ExpenseController {
     private ExpenseServiceImpl expenseService;
 
     @GetMapping("/expenses")
-    public List<Expense> getAllExpenses(){
-        return expenseService.getAllExpenses();
+    public List<Expense> getAllExpenses(Pageable pageable){
+        return expenseService.getAllExpenses(pageable).toList();
     }
     @GetMapping("/expenses/{id}")
     public Expense getExpenseById(@PathVariable("id") Long id){
