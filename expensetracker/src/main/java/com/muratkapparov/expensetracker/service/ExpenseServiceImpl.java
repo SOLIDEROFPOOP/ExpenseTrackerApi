@@ -1,6 +1,8 @@
 package com.muratkapparov.expensetracker.service;
 
 import com.muratkapparov.expensetracker.entity.Expense;
+import com.muratkapparov.expensetracker.entity.User;
+import com.muratkapparov.expensetracker.entity.UserModel;
 import com.muratkapparov.expensetracker.exception.ResourceNotFoundException;
 import com.muratkapparov.expensetracker.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,4 +70,6 @@ public class ExpenseServiceImpl implements ExpenseService{
         Page<Expense> pages = expenseRepository.findByDateBetween(startDate,endDate,pageable);
         return pages.toList();
     }
+
+
 }

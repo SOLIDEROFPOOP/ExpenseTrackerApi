@@ -1,6 +1,8 @@
 package com.muratkapparov.expensetracker.service;
 
 import com.muratkapparov.expensetracker.entity.Expense;
+import com.muratkapparov.expensetracker.entity.User;
+import com.muratkapparov.expensetracker.entity.UserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,4 +21,6 @@ public interface ExpenseService {
     List<Expense> readByExpenseName(String key , Pageable pageable);
 
     List<Expense> readByDate(Date startDate, Date endDate, Pageable pageable);
+
+
 }
