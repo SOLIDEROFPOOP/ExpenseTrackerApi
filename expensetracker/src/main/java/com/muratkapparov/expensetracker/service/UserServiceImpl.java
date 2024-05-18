@@ -7,18 +7,24 @@ import com.muratkapparov.expensetracker.exception.ResourceNotFoundException;
 import com.muratkapparov.expensetracker.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.security.KeyStore;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
     @Override
     public User createUser(UserModel user) {
         if (userRepository.existsByEmail(user.getEmail())) throw new ItemAlreadyExistsException("User is already registered with this email");
         User newUser = new User();
         BeanUtils.copyProperties(user,  newUser);
+        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
         return userRepository.save(newUser);
     }
 
