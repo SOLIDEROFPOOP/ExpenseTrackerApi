@@ -3,11 +3,9 @@ import com.muratkapparov.expensetracker.entity.Expense;
 import com.muratkapparov.expensetracker.service.ExpenseServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.Date;
 import java.util.List;
 

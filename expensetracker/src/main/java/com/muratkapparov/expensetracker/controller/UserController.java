@@ -1,9 +1,6 @@
 package com.muratkapparov.expensetracker.controller;
-
 import com.muratkapparov.expensetracker.entity.User;
-import com.muratkapparov.expensetracker.entity.UserModel;
 import com.muratkapparov.expensetracker.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
