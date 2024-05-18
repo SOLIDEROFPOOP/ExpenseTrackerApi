@@ -26,4 +26,20 @@ public class UserServiceImpl implements UserService{
     public User read(Long id) throws ResourceNotFoundException{
         return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("user not found for the id:" + id));
     }
+
+    @Override
+    public User update(User user, Long id) {
+        User oldUser = read(id);
+        oldUser.setName(user.getName() != null ? user.getName() : oldUser.getName());
+        oldUser.setEmail(user.getEmail() != null ? user.getEmail() : oldUser.getEmail());
+        oldUser.setPassword(user.getPassword() != null ? user.getPassword() : oldUser.getPassword());
+        oldUser.setAge(user.getAge() != null ? user.getAge() : oldUser.getAge());
+        return userRepository.save(oldUser);
+    }
+
+    @Override
+    public void delete(Long id) {
+        User user = read(id);
+        userRepository.delete(user);
+    }
 }
