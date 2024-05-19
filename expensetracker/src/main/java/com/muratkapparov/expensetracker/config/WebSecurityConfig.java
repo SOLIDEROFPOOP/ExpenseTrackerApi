@@ -26,6 +26,7 @@ public class WebSecurityConfig {
                         (auth) -> auth
                                 .requestMatchers("/login","/register").permitAll().anyRequest().authenticated()
                 ).csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .httpBasic(Customizer.withDefaults());
         return http.build();
 
@@ -42,7 +43,7 @@ public class WebSecurityConfig {
         return authenticationProvider;
     }
 
-
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
         return authenticationConfiguration.getAuthenticationManager();
     }

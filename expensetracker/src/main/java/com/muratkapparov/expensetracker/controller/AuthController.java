@@ -4,6 +4,8 @@ import com.muratkapparov.expensetracker.entity.LoginModel;
 import com.muratkapparov.expensetracker.entity.User;
 import com.muratkapparov.expensetracker.entity.UserModel;
 import com.muratkapparov.expensetracker.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,8 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +27,15 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthenticationProvider authenticationManager;
+    private AuthenticationManager authenticationManager;
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus> login(@RequestBody LoginModel login){
+    public ResponseEntity<HttpStatus> login(@RequestBody LoginModel login, HttpServletRequest request){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+        System.out.println("Authenticated user:" + SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
     @PostMapping("/register")
