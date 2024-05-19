@@ -10,13 +10,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +27,7 @@ public class AuthController {
     private UserService userService;
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody LoginModel login, HttpServletRequest request){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
@@ -38,8 +38,20 @@ public class AuthController {
         System.out.println("Authenticated user:" + SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<HttpStatus>(HttpStatus.OK);
     }
+
+    private void authenticate(String email, String password) throws Exception {
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        } catch (DisabledException e){
+            throw new Exception("User disabled");
+        } catch (BadCredentialsException e){
+            throw new Exception("Bad credentials");
+        }
+    }
+
     @PostMapping("/register")
     public ResponseEntity<User> save(@Valid @RequestBody UserModel user){
         return new ResponseEntity<User>(userService.createUser(user), HttpStatus.CREATED);
     }
+
 }
