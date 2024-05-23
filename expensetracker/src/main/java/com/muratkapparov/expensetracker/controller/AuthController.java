@@ -1,9 +1,12 @@
 package com.muratkapparov.expensetracker.controller;
 
+import com.muratkapparov.expensetracker.entity.JwtResponse;
 import com.muratkapparov.expensetracker.entity.LoginModel;
 import com.muratkapparov.expensetracker.entity.User;
 import com.muratkapparov.expensetracker.entity.UserModel;
+import com.muratkapparov.expensetracker.security.CustomUserDetailsService;
 import com.muratkapparov.expensetracker.service.UserService;
+import com.muratkapparov.expensetracker.util.JwtTokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -17,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,16 +32,20 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @PostMapping("/login")
-    public ResponseEntity<HttpStatus> login(@RequestBody LoginModel login, HttpServletRequest request){
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-        HttpSession session = request.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-        System.out.println("Authenticated user:" + SecurityContextHolder.getContext().getAuthentication().getName());
-        return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+    public ResponseEntity<JwtResponse> login(@RequestBody LoginModel login) throws Exception{
+        authenticate(login.getEmail(), login.getPassword());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(login.getEmail());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+        return new ResponseEntity<JwtResponse>(new JwtResponse(token),HttpStatus.OK);
     }
+
+
 
     private void authenticate(String email, String password) throws Exception {
         try {
