@@ -49,7 +49,7 @@ public class AuthController {
 
     private void authenticate(String email, String password) throws Exception {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (DisabledException e){
             throw new Exception("User disabled");
         } catch (BadCredentialsException e){
